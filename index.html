@@ -1,0 +1,431 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zodiac World | Discover Your Star Sign</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #100d20;
+    color: white;
+}
+
+header {
+    text-align: center;
+    padding: 45px 20px;
+    background: linear-gradient(135deg, #25134c, #101b38);
+}
+
+header h1 {
+    font-size: 38px;
+    color: #f5c76b;
+    margin-bottom: 12px;
+}
+
+header p {
+    color: #ddd;
+}
+
+nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 18px;
+    background: #1b1730;
+}
+
+nav button, .filter-btn {
+    padding: 10px 18px;
+    border: 1px solid #a78bfa;
+    border-radius: 25px;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+}
+
+nav button:hover, .filter-btn:hover,
+.filter-btn.active {
+    background: #805ad5;
+}
+
+.container {
+    max-width: 1150px;
+    margin: auto;
+    padding: 30px 20px;
+}
+
+.finder {
+    background: #211b38;
+    padding: 28px;
+    border-radius: 16px;
+    text-align: center;
+    margin-bottom: 35px;
+}
+
+.finder h2 {
+    color: #f5c76b;
+    margin-bottom: 12px;
+}
+
+.finder input {
+    padding: 13px;
+    border: none;
+    border-radius: 8px;
+    margin: 15px 5px;
+    font-size: 16px;
+}
+
+.finder button {
+    padding: 13px 22px;
+    border: none;
+    border-radius: 8px;
+    background: #805ad5;
+    color: white;
+    cursor: pointer;
+}
+
+#result {
+    margin-top: 20px;
+    line-height: 1.8;
+}
+
+.filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #211b38;
+    border: 1px solid #40345f;
+    border-radius: 15px;
+    padding: 24px;
+    transition: 0.3s;
+}
+
+.card:hover {
+    transform: translateY(-6px);
+    border-color: #f5c76b;
+}
+
+.symbol {
+    font-size: 48px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.card h3 {
+    color: #f5c76b;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.card p {
+    color: #ddd;
+    margin: 9px 0;
+    line-height: 1.5;
+}
+
+.card strong {
+    color: #c4a7ff;
+}
+
+.element {
+    text-align: center;
+    color: #f5c76b;
+    margin-bottom: 12px;
+}
+
+.details {
+    margin-top: 15px;
+    padding-top: 12px;
+    border-top: 1px solid #50436e;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    background: #1b1730;
+    color: #bbb;
+    margin-top: 40px;
+}
+
+@media(max-width: 600px) {
+    header h1 {
+        font-size: 28px;
+    }
+
+    .finder input {
+        width: 100%;
+        margin: 10px 0;
+    }
+
+    .finder button {
+        width: 100%;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>✨ ZODIAC WORLD ✨</h1>
+    <p>Discover your star sign, element, personality and more!</p>
+</header>
+
+<nav>
+    <button onclick="filterSigns('All')">All Signs</button>
+    <button onclick="filterSigns('Fire')">🔥 Fire</button>
+    <button onclick="filterSigns('Earth')">🌍 Earth</button>
+    <button onclick="filterSigns('Air')">🌬️ Air</button>
+    <button onclick="filterSigns('Water')">🌊 Water</button>
+</nav>
+
+<div class="container">
+
+    <section class="finder">
+        <h2>🔮 Find Your Zodiac Sign</h2>
+        <p>Enter your birthday to discover your star sign.</p>
+
+        <input type="date" id="birthday">
+        <button onclick="findSign()">Find My Sign</button>
+
+        <div id="result"></div>
+    </section>
+
+    <h2 style="text-align:center; margin-bottom:25px; color:#f5c76b;">
+        The 12 Zodiac Signs
+    </h2>
+
+    <div class="grid" id="zodiacGrid"></div>
+
+</div>
+
+<footer>
+    <p>✨ Zodiac World | Explore the 12 Star Signs ✨</p>
+    <p>Astrology descriptions are traditional associations, not scientific facts.</p>
+</footer>
+
+<script>
+
+const zodiacSigns = [
+
+{
+name:"Aries", symbol:"♈", element:"Fire",
+dates:"March 21 - April 19",
+start:[3,21], end:[4,19],
+love:"Adventure, excitement, independence and leadership.",
+dislike:"Boredom, being controlled and being ignored."
+},
+
+{
+name:"Taurus", symbol:"♉", element:"Earth",
+dates:"April 20 - May 20",
+start:[4,20], end:[5,20],
+love:"Comfort, loyalty, good food and stability.",
+dislike:"Dishonesty, sudden changes and broken promises."
+},
+
+{
+name:"Gemini", symbol:"♊", element:"Air",
+dates:"May 21 - June 20",
+start:[5,21], end:[6,20],
+love:"Communication, friendship, learning and fun.",
+dislike:"Boredom, restrictions and repetitive routines."
+},
+
+{
+name:"Cancer", symbol:"♋", element:"Water",
+dates:"June 21 - July 22",
+start:[6,21], end:[7,22],
+love:"Family, affection, close friendships and security.",
+dislike:"Betrayal, cold behaviour and dishonesty."
+},
+
+{
+name:"Leo", symbol:"♌", element:"Fire",
+dates:"July 23 - August 22",
+start:[7,23], end:[8,22],
+love:"Creativity, appreciation, fun and confidence.",
+dislike:"Being ignored, disrespect and negativity."
+},
+
+{
+name:"Virgo", symbol:"♍", element:"Earth",
+dates:"August 23 - September 22",
+start:[8,23], end:[9,22],
+love:"Organization, learning, helping others and planning.",
+dislike:"Disorganization, carelessness and unreliability."
+},
+
+{
+name:"Libra", symbol:"♎", element:"Air",
+dates:"September 23 - October 22",
+start:[9,23], end:[10,22],
+love:"Peace, friendship, beauty and fairness.",
+dislike:"Conflict, injustice and unnecessary drama."
+},
+
+{
+name:"Scorpio", symbol:"♏", element:"Water",
+dates:"October 23 - November 21",
+start:[10,23], end:[11,21],
+love:"Trust, deep connections, loyalty and honesty.",
+dislike:"Betrayal, dishonesty and fake friendships."
+},
+
+{
+name:"Sagittarius", symbol:"♐", element:"Fire",
+dates:"November 22 - December 21",
+start:[11,22], end:[12,21],
+love:"Travel, freedom, adventure and exploring.",
+dislike:"Restrictions, routine and dishonesty."
+},
+
+{
+name:"Capricorn", symbol:"♑", element:"Earth",
+dates:"December 22 - January 19",
+start:[12,22], end:[1,19],
+love:"Success, ambition, planning and stability.",
+dislike:"Laziness, broken promises and irresponsibility."
+},
+
+{
+name:"Aquarius", symbol:"♒", element:"Air",
+dates:"January 20 - February 18",
+start:[1,20], end:[2,18],
+love:"Original ideas, independence, friendship and learning.",
+dislike:"Being controlled, unfairness and narrow thinking."
+},
+
+{
+name:"Pisces", symbol:"♓", element:"Water",
+dates:"February 19 - March 20",
+start:[2,19], end:[3,20],
+love:"Creativity, kindness, imagination and emotional connection.",
+dislike:"Cruelty, insensitivity and dishonesty."
+}
+
+];
+
+function createCards(signs) {
+
+    const grid = document.getElementById("zodiacGrid");
+
+    grid.innerHTML = "";
+
+    signs.forEach(sign => {
+
+        grid.innerHTML += `
+        <div class="card">
+
+            <div class="symbol">${sign.symbol}</div>
+
+            <h3>${sign.name}</h3>
+
+            <div class="element">
+                ${sign.element} Element
+            </div>
+
+            <p><strong>Birth Dates:</strong> ${sign.dates}</p>
+
+            <div class="details">
+                <p><strong>❤️ What they love:</strong></p>
+                <p>${sign.love}</p>
+
+                <p><strong>💔 What they dislike:</strong></p>
+                <p>${sign.dislike}</p>
+            </div>
+
+        </div>
+        `;
+
+    });
+
+}
+
+function filterSigns(element) {
+
+    if(element === "All") {
+        createCards(zodiacSigns);
+    } else {
+        const filtered = zodiacSigns.filter(
+            sign => sign.element === element
+        );
+
+        createCards(filtered);
+    }
+
+}
+
+function findSign() {
+
+    const input = document.getElementById("birthday").value;
+    const result = document.getElementById("result");
+
+    if(!input) {
+        result.innerHTML = "Please select your birthday first.";
+        return;
+    }
+
+    const date = input.split("-").map(Number);
+    const month = date[1];
+    const day = date[2];
+
+    const sign = zodiacSigns.find(s => {
+
+        const current = month * 100 + day;
+        const start = s.start[0] * 100 + s.start[1];
+        const end = s.end[0] * 100 + s.end[1];
+
+        if(start <= end) {
+            return current >= start && current <= end;
+        }
+
+        return current >= start || current <= end;
+
+    });
+
+    if(sign) {
+
+        result.innerHTML = `
+            <h2 style="color:#f5c76b">
+                ${sign.symbol} ${sign.name}
+            </h2>
+
+            <p><strong>Element:</strong> ${sign.element}</p>
+            <p><strong>Birth Dates:</strong> ${sign.dates}</p>
+            <p><strong>❤️ Loves:</strong> ${sign.love}</p>
+            <p><strong>💔 Dislikes:</strong> ${sign.dislike}</p>
+        `;
+
+    }
+
+}
+
+// Display all signs when website opens
+createCards(zodiacSigns);
+
+</script>
+
+</body>
+</html>
